@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        button {
+            padding: 10px;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+           
+            function addItem() {
+                var nome = document.getElementById("nome").value;
+                var local = document.getElementById("local").value;
+                var data = document.getElementById("data").value;
+                var hora = document.getElementById("hora").value;
+                var descricao = document.getElementById("descricao").value;
+
+                if (nome && local && data && hora && descricao) {
+                    var newItem = {
+                        nome: nome,
+                        local: local,
+                        data: data,
+                        hora: hora,
+                        descricao: descricao
+                    };
+
+                    
+                    var items = JSON.parse(localStorage.getItem("baladaItems")) || [];
+
+                   
+                    items.push(newItem);
+
+                    
+                    localStorage.setItem("baladaItems", JSON.stringify(items));
+
+                 
+                    document.getElementById("baladaForm").reset();
+
+                    
+                    displayItems();
+                } else {
+                    alert("Preencha todos os campos!");
+                }
+            }
+
+         
+            function displayItems() {
+                var items = JSON.parse(localStorage.getItem("baladaItems")) || [];
+                var tableBody = document.getElementById("tableBody");
+                tableBody.innerHTML = "";
+
+                for (var i = 0; i < items.length; i++) {
+                    var row = tableBody.insertRow(tableBody.rows.length);
+                    var cell1 = row.insertCell(0);
+                    var cell2 = row.insertCell(1);
+                    var cell3 = row.insertCell(2);
+                    var cell4 = row.insertCell(3);
+                    var cell5 = row.insertCell(4);
+                    var cell6 = row.insertCell(5);
+
+                    cell1.innerHTML = items[i].nome;
+                    cell2.innerHTML = items[i].local;
+                    cell3.innerHTML = items[i].data;
+                    cell4.innerHTML = items[i].hora;
+                    cell5.innerHTML = items[i].descricao;
+
+                    var deleteButton = document.createElement("button");
+                    deleteButton.textContent = "Excluir";
+                    deleteButton.addEventListener("click", createDeleteHandler(i));
+                    cell6.appendChild(deleteButton);
+                }
+            }
+
+            
+            function createDeleteHandler(index) {
+                return function() {
+                    deleteItem(index);
+                };
+            }
+
+          
+            function deleteItem(index) {
+                var items = JSON.parse(localStorage.getItem("baladaItems")) || [];
+                items.splice(index, 1);
+                localStorage.setItem("baladaItems", JSON.stringify(items));
+                displayItems();
+            }
+
+            
+            document.getElementById("addItemButton").addEventListener("click", addItem);
+
+            
+            displayItems();
+        });
+    </script>
+</head>
+<body>
+    <h2>Gerenciador de Baladas</h2>
+    <form id="baladaForm">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" required>
+
+        <label for="local">Local:</label>
+        <input type="text" id="local" required>
+
+        <label for="data">Data:</label>
+        <input type="date" id="data" required>
+
+        <label for="hora">Hora:</label>
+        <input type="time" id="hora" required>
+
+        <label for="descricao">Descrição:</label>
+        <textarea id="descricao" rows="4" required></textarea>
+
+        <button type="button" id="addItemButton">Adicionar</button>
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Local</th>
+                <th>Data</th>
+                <th>Hora</th>
+                <th>Descrição</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+</body>
+</html>
